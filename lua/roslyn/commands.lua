@@ -52,6 +52,9 @@ local subcommand_tbl = {
             client:stop(force_stop)
         end,
     },
+    watch = {
+        impl = require("roslyn.config").select_filewatching,
+    },
     target = {
         impl = function()
             local bufnr = vim.api.nvim_get_current_buf()

@@ -33,6 +33,28 @@ function M.get()
     return roslyn_config
 end
 
+local selected_prefix = "* "
+local filewatching_options = { "auto", "off", "roslyn" }
+function M.select_filewatching()
+    local options = vim.deepcopy(filewatching_options)
+    for i, o in ipairs(options) do
+        if o == roslyn_config.filewatching then
+            options[i] = selected_prefix .. options[i]
+        end
+    end
+
+    vim.ui.select(filewatching_options, { prompt = "Change filewatching mode:" }, function(option)
+        if option == nil then
+            return
+        end
+
+        if vim.startswith(option, selected_prefix) then
+            option = option:sub(#selected_prefix + 1)
+        end
+        roslyn_config.filewatching = option
+    end)
+end
+
 ---@param user_config? RoslynNvimConfig
 ---@return InternalRoslynNvimConfig
 function M.setup(user_config)
