@@ -43,7 +43,7 @@ function M.select_filewatching()
         end
     end
 
-    vim.ui.select(filewatching_options, { prompt = "Change filewatching mode:" }, function(option)
+    vim.ui.select(options, { prompt = "Change filewatching mode:" }, function(option)
         if option == nil then
             return
         end
