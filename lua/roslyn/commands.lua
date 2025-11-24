@@ -66,25 +66,27 @@ local subcommand_tbl = {
                     return
                 end
 
-                local config = vim.tbl_deep_extend("force", vim.lsp.config["roslyn"], {
-                    root_dir = vim.fs.dirname(file),
-                    on_init = function(client)
-                        require("roslyn.lsp.on_init").sln(client, file)
-                    end,
-                })
+                require("roslyn.config").select_filewatching(function()
+                    local config = vim.tbl_deep_extend("force", vim.lsp.config["roslyn"], {
+                        root_dir = vim.fs.dirname(file),
+                        on_init = function(client)
+                            require("roslyn.lsp.on_init").sln(client, file)
+                        end,
+                    })
 
-                local client = vim.lsp.get_clients({ name = "roslyn" })[1]
-                if not client then
-                    vim.lsp.start(config)
-                    return
-                end
+                    local client = vim.lsp.get_clients({ name = "roslyn" })[1]
+                    if not client then
+                        vim.lsp.start(config)
+                        return
+                    end
 
-                on_stopped(function()
-                    vim.lsp.start(config)
+                    on_stopped(function()
+                        vim.lsp.start(config)
+                    end)
+
+                    local force_stop = vim.loop.os_uname().sysname == "Windows_NT"
+                    client:stop(force_stop)
                 end)
-
-                local force_stop = vim.loop.os_uname().sysname == "Windows_NT"
-                client:stop(force_stop)
             end)
         end,
     },

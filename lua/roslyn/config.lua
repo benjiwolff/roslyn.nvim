@@ -35,7 +35,8 @@ end
 
 local selected_prefix = "* "
 local filewatching_options = { "auto", "off", "roslyn" }
-function M.select_filewatching()
+---@param callback fun()?
+function M.select_filewatching(callback)
     local options = vim.deepcopy(filewatching_options)
     for i, o in ipairs(options) do
         if o == roslyn_config.filewatching then
@@ -52,6 +53,10 @@ function M.select_filewatching()
             option = option:sub(#selected_prefix + 1)
         end
         roslyn_config.filewatching = option
+
+        if callback ~= nil then
+            callback()
+        end
     end)
 end
 
