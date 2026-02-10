@@ -74,14 +74,32 @@ local subcommand_tbl = {
                         end,
                     })
 
+                    ---@param client_id integer
+                    local function fire_autocmd(client_id)
+                        vim.api.nvim_exec_autocmds("User", {
+                            pattern = "RoslynTarget",
+                            data = {
+                                type = "solution",
+                                target = file,
+                                client_id = client_id,
+                            },
+                        })
+                    end
+
                     local client = vim.lsp.get_clients({ name = "roslyn" })[1]
                     if not client then
-                        vim.lsp.start(config)
+                        local client_id = vim.lsp.start(config)
+                        if client_id then
+                            fire_autocmd(client_id)
+                        end
                         return
                     end
 
                     on_stopped(function()
-                        vim.lsp.start(config)
+                        local client_id = vim.lsp.start(config)
+                        if client_id then
+                            fire_autocmd(client_id)
+                        end
                     end)
 
                     local force_stop = vim.loop.os_uname().sysname == "Windows_NT"
