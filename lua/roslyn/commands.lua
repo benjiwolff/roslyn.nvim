@@ -84,9 +84,6 @@ local subcommand_tbl = {
                     local client = vim.lsp.get_clients({ name = "roslyn", bufnr = bufnr })[1]
                     if not client then
                         local client_id = vim.lsp.start(config, { bufnr = bufnr })
-                        if client_id then
-                            fire_autocmd(client_id)
-                        end
                         return
                     end
 
